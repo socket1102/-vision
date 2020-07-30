@@ -182,4 +182,25 @@ public class SysUser implements Serializable {
      * （github/github，wechat_enterprise/企业微信，dingtalk/钉钉）
      */
     private String thirdType;
+
+  /**
+   * 人脸识别唯一编号
+   */
+  private String faceCode;
+
+  /**
+   *人脸存在分组
+   */
+  private String faceGroup;
+
+  /**
+   *当前用户是否上传过人脸图片(数据字典，1否，2是)
+   */
+  @Dict(dicCode = "faceExist")
+  private Integer faceExist;
+
+  /**
+   * 人脸图片地址
+   */
+  private String faceImagePath;
 }

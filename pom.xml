@@ -395,11 +395,11 @@
 	    		<version>${jeecgboot.version}</version>
 	    	</dependency>
 	    	<!-- 七牛云SDK -->
-			<dependency>
+			<!--<dependency>
 				<groupId>com.qiniu</groupId>
 				<artifactId>qiniu-java-sdk</artifactId>
 				<version>7.2.23</version>
-			</dependency>
+			</dependency>-->
 		</dependencies>
 	</dependencyManagement>
 	<build>

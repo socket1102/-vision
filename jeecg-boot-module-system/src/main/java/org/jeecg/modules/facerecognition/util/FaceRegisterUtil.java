@@ -2,9 +2,11 @@ package org.jeecg.modules.facerecognition.util;
 
 import com.alibaba.fastjson.JSON;
 import com.baidu.aip.face.AipFace;
-import com.zgf.face_recognition.entity.BaiDuUserEntity;
+
+import org.jeecg.modules.facerecognition.entity.BaiDuUserEntity;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -17,19 +19,25 @@ import java.util.HashMap;
  * 类：人脸识别工具类
  * 作用：封装人脸识别及人脸库操作
  */
+@Component("faceRegisterUtil")
 public class FaceRegisterUtil {
-    public static void main(String[] args) {
-        /*JSONObject faceList = (JSONObject)queryFaceGroup();
+  /*public static void main(String[] args) {
+    JSONObject jsonObject = faceRegistration("D:\\opt\\upFiles\\temp\\SelfieCity_20200524210205_save_1596127722320.jpg", "2", "2020");
+   *//* JSONObject result = jsonObject.getJSONObject("result");*//*
+    System.out.println(jsonObject.get("error_code"));
+  }*/
+      /*获取JSON中的数组
+      JSONObject faceList = (JSONObject)queryFaceGroup();
         faceList=faceList.getJSONObject("result");
         JSONArray jsonArray=faceList.getJSONArray("group_id_list");
         System.out.println(jsonArray.get(0));*/
-    }
+
     /**
      * 方法作用:通过传入的人脸进行人脸库进行对比返回对比数据
      * @param imagePath 图片路径
      * }
      */
-    public static Object faceContrast(String imagePath) {
+    public static JSONObject faceContrast(String imagePath) {
         //通过BaiDuUserEntity
         AipFace client=new AipFace(BaiDuUserEntity.APP_ID,BaiDuUserEntity.API_KEY,BaiDuUserEntity.SECRET_KEY);
         // 传入可选参数调用接口
@@ -68,9 +76,9 @@ public class FaceRegisterUtil {
     /**
      *方法作用:将上传的人脸照片保存至人脸库中(自动识别图片中是否包含人脸)，也可以通过用户id进行覆盖更新操作
      * @param imagePath 图片路径
-     * @param userID 数据库对应的用户编号
+     * @param userId 数据库对应的用户编号
      */
-    public static Object faceRegistration(String imagePath,Integer userId){
+    public static JSONObject faceRegistration(String imagePath,String userId,String groupIds){
         AipFace client=new AipFace(BaiDuUserEntity.APP_ID,BaiDuUserEntity.API_KEY,BaiDuUserEntity.SECRET_KEY);
         // 传入可选参数调用接口
         HashMap<String, String> options = new HashMap<String, String>();
@@ -94,9 +102,9 @@ public class FaceRegisterUtil {
         //图片上传的格式
         String imageType = "BASE64";
         //人脸库的名字
-        String groupId = "2020";
+        String groupId = groupIds;
         //存入人脸库中的人脸编号,这里通过数据库的编号来确定
-        String faceUserId = userId.toString();
+        String faceUserId = userId;
 
         // 人脸注册或更新
         JSONObject res = client.addUser(image, imageType, groupId, faceUserId, options);
@@ -135,7 +143,7 @@ public class FaceRegisterUtil {
      *   "error_code": 0,   //执行编码，0为成功!
      *   "timestamp": 1594453348
      */
-    public static Object faceDetection(String imagePath) {
+    public static JSONObject faceDetection(String imagePath) {
         AipFace client=new AipFace(BaiDuUserEntity.APP_ID,BaiDuUserEntity.API_KEY,BaiDuUserEntity.SECRET_KEY);
         // 传入可选参数调用接口
         HashMap<String, String> options = new HashMap<String, String>();
@@ -164,7 +172,7 @@ public class FaceRegisterUtil {
      * @param faceCode 人脸的唯一识别码
      * @return
      */
-    public static Object faceDeletion(Integer faceUserId,String faceCode) {
+    public static JSONObject faceDeletion(Integer faceUserId,String faceCode) {
         AipFace client=new AipFace(BaiDuUserEntity.APP_ID,BaiDuUserEntity.API_KEY,BaiDuUserEntity.SECRET_KEY);
         // 传入可选参数调用接口
         HashMap<String, String> options = new HashMap<String, String>();
@@ -186,7 +194,7 @@ public class FaceRegisterUtil {
      * 方法作用：查询当前应用人脸组列表
      * @return 返回范围内的人脸组列表
      */
-    public static Object queryFaceGroup() {
+    public static JSONObject queryFaceGroup() {
         AipFace client=new AipFace(BaiDuUserEntity.APP_ID,BaiDuUserEntity.API_KEY,BaiDuUserEntity.SECRET_KEY);
         // 传入可选参数调用接口
         HashMap<String, String> options = new HashMap<String, String>();
