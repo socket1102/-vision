@@ -173,6 +173,7 @@ public class SysUserController {
           result.error500("添加失败");
         }
         return result;
+
       }else{
         result.error500("人脸上传失败，请保持人脸清晰度并重试！");
         return result;
@@ -201,6 +202,7 @@ public class SysUserController {
           sysBaseAPI.addLog("编辑用户，id： " +jsonObject.getString("id") ,CommonConstant.LOG_TYPE_2, 2);
           if(sysUser==null) {
             result.error500("未找到对应实体");
+            return result;
           }else {
             SysUser user = JSON.parseObject(jsonObject.toJSONString(), SysUser.class);
             user.setFaceExist(2);
@@ -215,6 +217,7 @@ public class SysUserController {
             sysUserService.editUserWithDepart(user, departs);
             sysUserService.updateNullPhoneEmail();
             result.success("修改成功!");
+            return result;
           }
         } catch (Exception e) {
           log.error(e.getMessage(), e);
