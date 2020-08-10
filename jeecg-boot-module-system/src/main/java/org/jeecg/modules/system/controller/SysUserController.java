@@ -125,14 +125,6 @@ public class SysUserController {
         item.setOrgCode(useDepNames.get(item.getId()));
       });
     }
-    List<SysUser>  userLists= pageList.getRecords();
-    for(SysUser sysUser:userLists){
-      if (sysUser.getFaceCode()!=null){
-        sysUser.setFaceExist(2);
-      }else{
-        sysUser.setFaceExist(1);
-      }
-    }
     result.setSuccess(true);
     result.setResult(pageList);
     log.info(pageList.toString());
@@ -143,45 +135,25 @@ public class SysUserController {
   //@RequiresPermissions("user:add")
   public Result<SysUser> add(@RequestBody JSONObject jsonObject) {
     Result<SysUser> result = new Result<SysUser>();
-    String faceImagePath = jsonObject.getString("faceImagePath");
-    if(faceImagePath!=null && !faceImagePath.equals("")){
-      String path="\\";
-      org.json.JSONObject faceJson = FaceRegisterUtil.faceRegistration("D:\\opt\\upFiles\\" + faceImagePath.replace("/", path), jsonObject.getString("id"), "2020");
-      org.json.JSONObject faceResult = faceJson.getJSONObject("result");
-      String faceToken=faceResult.getString("face_token");
-      String error_code = faceJson.get("error_code").toString();
-      if (error_code.equals("0")){
-        String selectedRoles = jsonObject.getString("selectedroles");
-        String selectedDeparts = jsonObject.getString("selecteddeparts");
-        try {
-          SysUser user = JSON.parseObject(jsonObject.toJSONString(), SysUser.class);
-          user.setFaceExist(2);
-          user.setFaceGroup("2020");
-          user.setFaceCode(faceToken);
-          user.setCreateTime(new Date());//设置创建时间
-          String salt = oConvertUtils.randomGen(8);
-          user.setSalt(salt);
-          String passwordEncode = PasswordUtil.encrypt(user.getUsername(), user.getPassword(), salt);
-          user.setPassword(passwordEncode);
-          user.setStatus(1);
-          user.setDelFlag(CommonConstant.DEL_FLAG_0);
-          sysUserService.addUserWithRole(user, selectedRoles);
-          sysUserService.addUserWithDepart(user, selectedDeparts);
-          result.success("添加成功！");
-        } catch (Exception e) {
-          log.error(e.getMessage(), e);
-          result.error500("添加失败");
-        }
-        return result;
-
-      }else{
-        result.error500("人脸上传失败，请保持人脸清晰度并重试！");
-        return result;
-      }
-    }else{
-      result.error500("必须上传你的人脸图片！");
-      return result;
+    String selectedRoles = jsonObject.getString("selectedroles");
+    String selectedDeparts = jsonObject.getString("selecteddeparts");
+    try {
+      SysUser user = JSON.parseObject(jsonObject.toJSONString(), SysUser.class);
+      user.setCreateTime(new Date());//设置创建时间
+      String salt = oConvertUtils.randomGen(8);
+      user.setSalt(salt);
+      String passwordEncode = PasswordUtil.encrypt(user.getUsername(), user.getPassword(), salt);
+      user.setPassword(passwordEncode);
+      user.setStatus(1);
+      user.setDelFlag(CommonConstant.DEL_FLAG_0);
+      sysUserService.addUserWithRole(user, selectedRoles);
+      sysUserService.addUserWithDepart(user, selectedDeparts);
+      result.success("添加成功！");
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+      result.error500("操作失败");
     }
+    return result;
   }
 
   @RequestMapping(value = "/edit", method = RequestMethod.PUT)
@@ -189,50 +161,30 @@ public class SysUserController {
   //@RequiresPermissions("user:edit")
   public Result<SysUser> edit(@RequestBody JSONObject jsonObject) {
     Result<SysUser> result = new Result<SysUser>();
-    String faceImagePath = jsonObject.getString("faceImagePath");
-    if(faceImagePath!=null && !faceImagePath.equals("")){
-      String path="\\";
-      org.json.JSONObject faceJson = FaceRegisterUtil.faceRegistration("D:\\opt\\upFiles\\" + faceImagePath.replace("/", path), jsonObject.getString("id"), "2020");
-      org.json.JSONObject faceResult = faceJson.getJSONObject("result");
-      String faceToken=faceResult.getString("face_token");
-      String error_code = faceJson.get("error_code").toString();
-      if (error_code.equals("0")){
-        try {
-          SysUser sysUser = sysUserService.getById(jsonObject.getString("id"));
-          sysBaseAPI.addLog("编辑用户，id： " +jsonObject.getString("id") ,CommonConstant.LOG_TYPE_2, 2);
-          if(sysUser==null) {
-            result.error500("未找到对应实体");
-            return result;
-          }else {
-            SysUser user = JSON.parseObject(jsonObject.toJSONString(), SysUser.class);
-            user.setFaceExist(2);
-            user.setFaceGroup("2020");
-            user.setFaceCode(faceToken);
-            user.setUpdateTime(new Date());
-            //String passwordEncode = PasswordUtil.encrypt(user.getUsername(), user.getPassword(), sysUser.getSalt());
-            user.setPassword(sysUser.getPassword());
-            String roles = jsonObject.getString("selectedroles");
-            String departs = jsonObject.getString("selecteddeparts");
-            sysUserService.editUserWithRole(user, roles);
-            sysUserService.editUserWithDepart(user, departs);
-            sysUserService.updateNullPhoneEmail();
-            result.success("修改成功!");
-            return result;
-          }
-        } catch (Exception e) {
-          log.error(e.getMessage(), e);
-          result.error500("操作失败");
-        }
-        return result;
-      }else{
-        result.error500("人脸上传失败，请保持人脸清晰度并重试！");
-        return result;
+    try {
+      SysUser sysUser = sysUserService.getById(jsonObject.getString("id"));
+      sysBaseAPI.addLog("编辑用户，id： " +jsonObject.getString("id") ,CommonConstant.LOG_TYPE_2, 2);
+      if(sysUser==null) {
+        result.error500("未找到对应实体");
+      }else {
+        SysUser user = JSON.parseObject(jsonObject.toJSONString(), SysUser.class);
+        user.setUpdateTime(new Date());
+        //String passwordEncode = PasswordUtil.encrypt(user.getUsername(), user.getPassword(), sysUser.getSalt());
+        user.setPassword(sysUser.getPassword());
+        String roles = jsonObject.getString("selectedroles");
+        String departs = jsonObject.getString("selecteddeparts");
+        sysUserService.editUserWithRole(user, roles);
+        sysUserService.editUserWithDepart(user, departs);
+        sysUserService.updateNullPhoneEmail();
+        result.success("修改成功!");
       }
-    }else{
-      result.error500("必须上传你的人脸图片！");
-      return result;
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+      result.error500("操作失败");
     }
+    return result;
   }
+
 
   /**
    * 删除用户
