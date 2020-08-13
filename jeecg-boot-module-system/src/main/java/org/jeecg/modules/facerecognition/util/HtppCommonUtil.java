@@ -1,6 +1,5 @@
 package org.jeecg.modules.facerecognition.util;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,10 +7,20 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLEncoder;
-import java.util.Map;
 
+
+/**
+ * 外部接口调用工具类
+ */
 public class HtppCommonUtil {
+  /**
+   *
+   * @param url   请求路径，必须的
+   * @param param 请求参数，必须的
+   * @param charset 请求编码，必须的，大部分为UTF-8
+   * @param token   请求令牌，可选
+   * @return
+   */
     public static String sendPostUrl(String url, String param, String charset,String token) {
         PrintWriter out = null;
         BufferedReader in = null;

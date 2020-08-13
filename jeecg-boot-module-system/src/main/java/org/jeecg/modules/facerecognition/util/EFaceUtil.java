@@ -1,6 +1,7 @@
 package org.jeecg.modules.facerecognition.util;
 
 import com.alibaba.fastjson.JSONObject;
+import org.springframework.stereotype.Component;
 
 import static org.jeecg.modules.facerecognition.util.HtppCommonUtil.sendPostUrl;
 
@@ -10,9 +11,10 @@ import static org.jeecg.modules.facerecognition.util.HtppCommonUtil.sendPostUrl;
  * @Version 1.0
  * 作用:
  **/
+@Component("eFaceUtil")
 public class EFaceUtil {
   public static void main(String[] args) {
-    getInfo(getToken());
+
   }
 
   /**
@@ -27,10 +29,19 @@ public class EFaceUtil {
   /**
    * 获取通行记录
    */
-  public static void getInfo(String token){
+  public static JSONObject getInfo(String token){
     String json =sendPostUrl("http://172.16.196.211:8085/cloudIntercom/selectAccessRecord" +
       "?", "pageNum=1&pageSize=50", "UTF-8",token);
     JSONObject jsonObject= JSONObject.parseObject(json);
-    System.out.println(jsonObject);
+    return jsonObject;
+  }
+  /**
+   * 查询部门树
+   */
+  public static JSONObject queryBranch(String token){
+    String json =sendPostUrl("http://172.16.196.211:8085/cloudIntercom/selectDepartmentTree" +
+      "?", "pageNum=1&pageSize=50", "UTF-8",token);
+    JSONObject jsonObject= JSONObject.parseObject(json);
+    return jsonObject;
   }
 }

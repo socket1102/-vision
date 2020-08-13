@@ -112,7 +112,7 @@
         :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
         @change="handleTableChange">
 
-        <template slot="avatarslot" slot-scope="text, record, index">
+        <template slot="avatarslot" slot-scope="text, record">
           <div class="anty-img-wrap">
             <a-avatar shape="square" :src="getAvatarView(record.avatar)" icon="user"/>
           </div>
@@ -267,12 +267,6 @@
             align: "center",
             width: 180,
             dataIndex: 'departIds_dictText'
-          },
-          {
-            title: '是否上传人脸',
-            align: "center",
-            width: 180,
-            dataIndex: 'faceExist_dictText'
           },
           {
             title: '状态',
